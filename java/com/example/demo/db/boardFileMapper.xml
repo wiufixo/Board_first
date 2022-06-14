@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardFile">
+  <select id="findAllBoardFileByBoardNo" resultType="boarFiledVO">
+	select fileNo, fname, created 
+	from boardFile
+	where boardNo=${boardNo};
+  </select>
+  <select id="getNextBoardFileNo" resultType="Integer">
+ 	select nvl(max(fileNo),0)+1 from boardFile
+  </select>
+  <insert id="insertBoardFile" parameterType="boardFileVO">
+  	insert into boardFile(fileNo, boardNo, fname, created) 
+	values(#{fileNo}, #{boardNo}, #{fname}, sysdate);
+  </insert>
+  <update id="updateBoardFile" parameterType="HashMap">
+  	update boardFile 
+	set fname=#{fname}, updated=sysdate where fileNo=#{fileNo};
+  </update>
+  <delete id="deleteBoardFile">
+  	delete boardFile 
+	where fileNo=#{fileNo}
+  </delete>
+</mapper>

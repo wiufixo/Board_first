@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardComment">
+  <select id="countBoardComment" resultType="Integer">
+  	select count(commentNo) 
+	from boardComment 
+	where boardNo=#{boardNo};
+  </select>
+  <select id="findAllBoardCommentByBoardNo" resultType="listBoardCommentVO">
+  	select bc.boardNo, bc.commentNo, c.nickName, bc.content, bc.c_ref, bc.c_step, bc.c_level, bc.created 
+	from boardComment bc, customer c 
+	where bc.custNo=c.custNo 
+	and bc.boardNo=${boardNo} 
+	order by bc.c_ref, bc.c_step
+  </select>
+  <select id="getNextBoardCommentNo" resultType="Integer">
+  	select nvl(max(commentNo),0)+1 from boardComment
+  </select>
+  <insert id="insertBoardComment" parameterType="boardCommentVO">
+  	insert into boardComment(commentNo, custNo, boardNo, content, c_ref, c_step, created) 
+	values(#{commentNo}, #{custNo}, #{boardNo}, #{content}, #{c_ref}, #{c_step}, sysdate)
+  </insert>
+  <update id="updateBoardCommentStep" parameterType="HashMap">
+  	update boardComment set c_step=c_step+1 
+  	where c_ref=#{c_ref} and c_step>#{c_step}
+  </update>
+  <select id="detailOfBoardComment" resultType="listBoardCommentVO">
+  	select bc.boardNo, bc.commentNo, c.nickName, bc.content, bc.created 
+	from boardComment bc, customer c 
+	where bc.custNo=c.custNo 
+	and bc.commentNo=#{commentNo}
+  </select>
+  <update id="updateBoardComment" parameterType="HashMap">
+  	update boardComment 
+	set content=#{content}, updated=sysdate 
+	where commentNo=#{commentNo};
+  </update>
+  <delete id="deleteBoardComment">
+  	delete boardComment 
+	where commentNo=#{commentNo};
+  </delete>
+</mapper>
